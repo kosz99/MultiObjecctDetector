@@ -1,0 +1,68 @@
+#Training configuration file
+training_name: Test-Repo
+epochs: 1
+cudnn_benchmark: True
+gradScaler: True
+gpu_num: 1
+num_workers: 8
+pin_memory: True
+last_epochs_without_aug: 5
+
+# Warmup
+warmup: False
+warmup_epochs: 0
+initial_lr: 0.00001
+
+optim_setup:
+  optimizer_name: "ADAMW"
+  learning_rate: 0.0001
+  momentum: 0.937
+  weight_decay: 0.0005
+
+# LR scheduler
+LR_setup:
+  LR: False
+  name: "Cosine"
+  max_lr: 0.005
+  T_max: 50
+  eta_min: 0.00012
+  verbose: False
+
+
+loss_setup:
+  reg_loss: "DIOU" #DIOU, GIOU, IOU
+  obj_loss: "Focal"
+  cls_loss: "BCE" #BCE, Focal
+  alpha: 1.5 #iou loss
+  beta: 1.5 #cls loss
+  gamma: 3.0 #reg_loss
+
+dataset_setup:
+  dataset_folder: "BDD100k"
+  train_dataset: "test"
+  val_dataset: "test"
+  train_mosaic_prob: 0.05
+  train_mixup_prob: 0.1
+  train_colorJitter_prob: 0.25
+  train_mosaic_colorJitter_prob: 0.2
+  train_mixup_colorJitter_prob: 0.1
+  train_gauss_noise_prob: 0.25
+  train_mosaic_gauss_noise_prob: 0.15
+  train_mixup_gauss_noise_prob: 0.1
+  small_size: 128
+  medium_size: 256
+  large_size: 384
+
+dataloader_setup:
+  train_batch_size: 12
+  train_multiscale_step: 0
+  train_img_size:
+    #- [1280, 704]
+    #- [1920, 1088]
+    - [1280, 704]  
+  val_img_size:
+    - [1280, 704]
+save_weights:
+  save_after_every_epochs: 5
+  calculate_map_every_epoch: 1
+  dir_name: "src/Weights"

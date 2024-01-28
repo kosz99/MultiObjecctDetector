@@ -1,0 +1,21 @@
+# Model config file
+
+model_type: "Basic" #Basic or Extended (4 layer)
+backbone_name: "EfficientNetSmall" #EfficientNet, EfficientNetSmall, RegNet or Swin
+pretrained_backbone: True
+spp_exist: True
+spp_type: "SPPF" #SPP or SPPF
+channels: 256
+neck_name: "GSCSPPAN" #CSPPAN, FPNPAN, CSPPAN_CBAM or GSCSPPAN  
+neck_act: "silu" #relu, elu, celu, mish, gelu, leaky_relu, silu
+neck_batch_norm: True
+reduction_ratio: 2
+neck_fusion_type: "cat" #cat, add
+bottleneck_shortcut: False
+bottleneck_num: 1
+class_number: 3
+head_type: "seperated" #shared, separated (not implemented yet)
+head_activation_function: "silu" #relu, elu, celu, mish, gelu, leaky_relu, silu
+head_batch_norm: False
+head_num_convs_blocks: 2
+
