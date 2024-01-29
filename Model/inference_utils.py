@@ -68,7 +68,6 @@ def get_bb_from_model_output(img_shape, model_output, objectness_score = 0.5, nm
         _y = (32*y)
         bbox.append(torch.tensor([max(0, _x - C5_reg_output[0,0,y,x].item()), max(0, _y - C5_reg_output[0,2,y,x].item()), min(img_shape[1], _x + C5_reg_output[0,1,y,x].item()), min(img_shape[0], _y + C5_reg_output[0,3,y,x].item())]))           
         score.append(C5i[0,0,y,x])
-        #score.append(1.0)
         cls.append(torch.argmax(C5_cls_output[0,:,y,x]).item())
     
     #C4 output shrink 16 times
@@ -86,7 +85,6 @@ def get_bb_from_model_output(img_shape, model_output, objectness_score = 0.5, nm
         _y = (16*y) 
         bbox.append(torch.tensor([max(0, _x - C4_reg_output[0,0,y,x].item()), max(0, _y - C4_reg_output[0,2,y,x].item()), min(img_shape[1], _x + C4_reg_output[0,1,y,x].item()), min(img_shape[0], _y + C4_reg_output[0,3,y,x].item())]))
         score.append(C4i[0,0,y,x])
-        #score.append(1.0)
         cls.append(torch.argmax(C4_cls_output[0,:,y,x]).item())  
     
     #C3 output shrink 8 times
@@ -104,7 +102,6 @@ def get_bb_from_model_output(img_shape, model_output, objectness_score = 0.5, nm
         _y = (8*y) 
         bbox.append(torch.tensor([max(0, _x - C3_reg_output[0,0,y,x].item()), max(0, _y - C3_reg_output[0,2,y,x].item()), min(img_shape[1], _x + C3_reg_output[0,1,y,x].item()), min(img_shape[0], _y + C3_reg_output[0,3,y,x].item())]))
         score.append(C3i[0,0,y,x])
-        #score.append(1.0)
         cls.append(torch.argmax(C3_cls_output[0,:,y,x]).item())
 
     if len(bbox)>0:

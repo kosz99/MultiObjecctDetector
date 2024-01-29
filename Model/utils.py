@@ -65,12 +65,11 @@ def get_upsample(upsample_type = "nearest", scale_factor = 2):
         "nearest": nn.UpsamplingNearest2d(scale_factor = scale_factor),
         "bilinear": nn.UpsamplingBilinear2d(scale_factor = scale_factor)
     }
-
     return func[upsample_type]
+
 class CONV(nn.Module):
     '''
     CONV module - Conv2d + batch norm(optional) + activation function
-
     Args:
         input_channels (int): number of nn.Conv2d input channels
         output_channels (int): number of nn.Conv2d output_channels
@@ -88,23 +87,18 @@ class CONV(nn.Module):
                 nn.Conv2d(input_channels, output_channels, kernel_size, stride, padding, bias=False),
                 nn.BatchNorm2d(output_channels),
                 get_activation(act)
-
-            )
-        
+            )        
         else:
             self.conv = nn.Sequential(
                 nn.Conv2d(input_channels, output_channels, kernel_size, stride, padding, bias = True),
                 get_activation(act)
-
             )
     
     def forward(self, x):
         '''
         Module computing
-
         Args:
-            input (Tensor): module input
-        
+            input (Tensor): module input        
         Returns:
             results (Tensor): module output (nn.Sequential - conv2d, bn, act)
         '''
@@ -114,7 +108,6 @@ class CONV(nn.Module):
 class DWCONV(nn.Module):
     '''
     DWCONV(Depthwise Convolution) module - Conv2d + batch norm(optional) + activation function
-
     Args:
         channels (int): number of nn.Conv2d input/output channels
         kernel_size (int): nn.Conv2d kernel size
@@ -131,14 +124,11 @@ class DWCONV(nn.Module):
                 nn.Conv2d(channels, channels, kernel_size, stride, padding, groups = channels, bias = False),
                 nn.BatchNorm2d(channels),
                 get_activation(act)
-
-            )
-        
+            )    
         else:
             self.dwconv = nn.Sequential(
                 nn.Conv2d(channels, channels, kernel_size, stride, padding, groups = channels, bias = True),
                 get_activation(act)
-
             )
     
     def forward(self, x):

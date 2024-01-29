@@ -179,17 +179,4 @@ class ManyHeadsExtended(nn.Module):
 
         return output
 
-
-'''    
-stride_params = nn.ParameterList([nn.Parameter((torch.randint(0,10,(1,))).float()),
-                                               nn.Parameter((torch.randint(0,10,(1,))).float()),
-                                               nn.Parameter((torch.randint(0,10,(1,))).float())])
-
-X = [torch.rand(2, 256, 32, 32), torch.rand(2, 256, 16, 16), torch.rand(2, 256, 8, 8)]
-original_head = ManyHeads(256, 5, batch_norm=True)
-print(original_head)
-original_output = original_head(X, True)
-for i in original_output:
-    for j in i:
-        print(j.shape)
-'''        
+ 

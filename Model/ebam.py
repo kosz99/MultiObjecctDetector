@@ -33,10 +33,8 @@ class ChannelEBAM(nn.Module):
     
     def forward(self, X):
         X_flatten = X.flatten(-2,-1)
-
         #Calculate prob
         X_prob = self.softmax(X_flatten)
-
         #Calculate entropy
         entropy = -(X_prob * torch.log2(X_prob)).sum(-1)
         entropy_attention = self.sigm(self.mlp(entropy)).unsqueeze(-1).unsqueeze(-1)

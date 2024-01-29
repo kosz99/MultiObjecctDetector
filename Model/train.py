@@ -197,20 +197,6 @@ class Trainer:
                                                   self.training_config['LR_setup']['T_max'],
                                                   self.training_config['LR_setup']['eta_min'],
                                                   False)    
-            #print(self.main_scheduler)                                                       
-
-        '''
-        self.metrcics_dataloader = DataLoader(self.test_dataset,
-                                           batch_sampler=BatchSampler(
-                                           SequentialSampler(self.test_dataset),
-                                           1,
-                                           False,
-                                           0,
-                                           self.training_config['dataloader_setup']['val_img_size']
-                                           ),
-                                           num_workers=8,
-                                           pin_memory=True)
-        '''
 
     def create_loss(self, reg_loss = "DIOU", obj_loss = "Focal", cls_loss = "BCE", alpha = 1, beta = 1, gamma = 1):
         if self.model_type == "Basic":
@@ -240,10 +226,8 @@ class Trainer:
         assert workers_num <= os.cpu_count(), f"too much workers :("
     
     def warmup(self):
-
         warmup_optimizer = get_optimizer(self.model, **self.training_config['optim_setup'])
         scheduler = torch.optim.lr_scheduler.LinearLR(warmup_optimizer, self.training_config['initial_lr']/self.training_config['optim_setup']['learning_rate'], total_iters=self.training_config['warmup_epochs'], verbose=True)
-
 
         for epoch in range(self.training_config['warmup_epochs']):
             self.model.train()
@@ -294,7 +278,6 @@ class Trainer:
             Logger.current_logger().report_scalar("Cls_Loss", "train", cls_loss/n_pos, epoch+1)
             Logger.current_logger().report_scalar("Reg_Loss", "train", reg_loss/n_pos, epoch+1)
             Logger.current_logger().report_scalar("IOU_Loss", "train", iou_loss/len(self.train_dataloader), epoch+1)  
-
 
             self.model.eval()
             test_loss = 0.0
@@ -362,7 +345,6 @@ class Trainer:
                 if self.model_type == "Basic":
                     img, label = data
                   
-
                     C3_cls, C4_cls, C5_cls, C3_iou, C4_iou, C5_iou, C3_reg, C4_reg, C5_reg = label
                     labels = (C3_cls.to(device=self.device), C4_cls.to(device=self.device), C5_cls.to(device=self.device), C3_iou.to(device=self.device), C4_iou.to(device=self.device), C5_iou.to(device=self.device), C3_reg.to(device=self.device), C4_reg.to(device=self.device), C5_reg.to(device=self.device))
 
@@ -371,7 +353,6 @@ class Trainer:
 
                     C3_cls, C4_cls, C5_cls, C6_cls, C3_iou, C4_iou, C5_iou, C6_iou, C3_reg, C4_reg, C5_reg, C6_reg = label
                     labels = (C3_cls.to(device=self.device), C4_cls.to(device=self.device), C5_cls.to(device=self.device), C6_cls.to(device=self.device), C3_iou.to(device=self.device), C4_iou.to(device=self.device), C5_iou.to(device=self.device), C6_iou.to(device=self.device),C3_reg.to(device=self.device), C4_reg.to(device=self.device), C5_reg.to(device=self.device), C6_reg.to(device=self.device))
-
 
                 img = img.to(device=self.device)
                 self.optimizer.zero_grad()
@@ -450,13 +431,14 @@ class Trainer:
             Logger.current_logger().report_scalar("Reg_Loss", "test", reg_loss/n_pos, epoch+1)
             Logger.current_logger().report_scalar("IOU_Loss", "test", iou_loss/len(self.test_dataloader), epoch+1)                
             
+            #Calculate metrics
             if (epoch+1)%self.training_config['save_weights']['calculate_map_every_epoch'] == 0 or (epoch+1)%self.training_config['save_weights']['save_after_every_epochs'] == 0:
                     
                 if self.model_type == "Basic":
                     metrics = calculate_map(self.model, self.map_dataloader, self.device)
                 elif self.model_type == "Extended":
                     metrics = calculate_map_extended(self.model, self.map_dataloader, self.device)    
-            #    print(metrics)
+                    
                 Logger.current_logger().report_scalar("mAP", "mAP", metrics['map'].item(), epoch+1)
                 Logger.current_logger().report_scalar("mAP", "mAP@50", metrics['map_50'].item(), epoch+1)
                 Logger.current_logger().report_scalar("mAP", "mAP@75", metrics['map_75'].item(), epoch+1)
@@ -467,9 +449,7 @@ class Trainer:
                 for cls_idx, mar_cls in enumerate(metrics['mar_100_per_class']):
                     Logger.current_logger().report_scalar("mAR per class", f"class_{cls_idx}", mar_cls.item(), epoch+1)
             
-
-            
-
+            #Save weights
             if (epoch+1)%self.training_config['save_weights']['save_after_every_epochs'] == 0:
                 name = f"{self.training_config['save_weights']['dir_name']}/{self.training_config['training_name']}_{epoch+1}.pth"
                 if self.training_config['gpu_num']>1:

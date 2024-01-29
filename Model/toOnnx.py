@@ -18,8 +18,6 @@ class Convert2onnx():
         self.model.to(device="cpu")
         self.model.load_state_dict(torch.load(weights_path, map_location="cpu"))
         self.model.eval()
-        self.model.head.sigm = True
-
 
     def read_yaml(self, config_file):
         with open(config_file) as file:
@@ -43,7 +41,7 @@ class Convert2onnx():
                         x,                         # model input (or a tuple for multiple inputs)
                         "test.onnx",   # where to save the model (can be a file or file-like object)
                         export_params=True,        # store the trained parameter weights inside the model file
-                        opset_version=11,          # the ONNX version to export the model to
+                        opset_version=16,          # the ONNX version to export the model to
                         do_constant_folding=True,  # whether to execute constant folding for optimization
                         input_names = ['input'],   # the model's input names
                         output_names = ['output'], # the model's output names
